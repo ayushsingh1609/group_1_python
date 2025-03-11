@@ -1,116 +1,84 @@
 import streamlit as st
-import yfinance as yf
-import matplotlib.pyplot as plt
-import time
-import requests
+import pandas as pd
+import numpy as np
+import joblib
+import os
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import accuracy_score, classification_report
 
-# Streamlit Page Configuration
-st.set_page_config(page_title="Stock Predictor", page_icon="📈", layout="wide")
+# Load cleaned stock data
+df = pd.read_csv('cleaned_stock_data.csv')
 
-# Custom CSS for Navigation Bar
-st.markdown(
-    """
-    <style>
-        .sidebar .sidebar-content {
-            background-color: #1E1E1E;
-        }
-        .sidebar .sidebar-content .block-container {
-            color: white;
-        }
-        .sidebar .sidebar-content .stRadio label {
-            color: white;
-            font-size: 16px;
-        }
-        .sidebar .sidebar-content .stRadio div[role="radiogroup"] label:hover {
-            background-color: #444;
-            border-radius: 10px;
-            padding: 5px;
-        }
-        .sidebar .sidebar-content .stRadio div[role="radiogroup"] label {
-            transition: all 0.3s ease;
-            padding: 5px;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# Get top 10 companies based on trading volume
+top_10_companies = df.groupby('ticker')['volume'].sum().nlargest(10).index.tolist()
+
+# Create a mapping of tickers to company names
+company_mapping = df[['ticker', 'company name']].drop_duplicates().set_index('ticker').to_dict()['company name']
+
+# Streamlit UI
+st.set_page_config(page_title="Stock Trend Predictor", page_icon="📈", layout="wide")
 
 # Navigation Bar
 st.sidebar.title("🔍 Navigation")
 st.sidebar.markdown("<hr>", unsafe_allow_html=True)
-page = st.sidebar.radio("Go to", ["🏠 Home", "📊 Stock Predictor"], index=0)
+page = st.sidebar.radio("Go to", ["🏠 Home", "📊 Stock Predictor"], index=1)
 
 if page == "🏠 Home":
-    st.title("Welcome to the Stock Price Movement Predictor 📊")
-
-    st.markdown("""
-    ### Overview
-    This trading system allows users to predict whether a selected company's stock price will go **Up** or **Down** based on historical data. 
-    It provides insights into stock trends using machine learning models.
-
-    ### Core Functionalities
-    - 📌 **Stock Selection**: Choose a company from the available list.
-    - 📈 **Price Prediction**: The system forecasts if the price will increase or decrease the next day.
-    - 📊 **Visualization**: View historical trends and model predictions.
-
-    ### About the Development Team
-    **Team Members:**
-    - Ayush Singh
-    - Silvana Cortes
-    - Jorge Hiroshi
-    - Chievin Tochkov
-    - Christyana Kane
-
-    ### Purpose & Objectives
-    💡 The goal of this system is to **empower traders and investors** by providing **data-driven predictions** that enhance decision-making.
-    """)
-
-    # Add a decorative separator
-    st.markdown("---")
-
-    # News Section
-    st.markdown("## 📰 Latest Stock Market News")
-    
-    def fetch_news():
-        try:
-            response = requests.get("https://newsapi.org/v2/top-headlines?category=business&apiKey=47c9b568642a4da3aea0900ac8d141fd")
-            news_data = response.json()
-            
-            if "articles" in news_data:
-                for article in news_data["articles"][:5]:
-                    st.markdown(f"### [{article['title']}]({article['url']})")
-                    st.write(article["description"])
-                    st.markdown("---")
-            else:
-                st.write("No news available at the moment.")
-        except Exception as e:
-            st.write(f"Error fetching news: {e}")
-
-    fetch_news()
-
-    # Live Stock Price Graph for Top 5 Companies
-    top_companies = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA"]
-    st.markdown("## 📈 Live Stock Price Trends")
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-
-    for ticker in top_companies:
-        try:
-            stock_data = yf.download(ticker, period="7d", interval="1h")
-            time.sleep(1)  # Prevent rate limiting
-            
-            if not stock_data.empty:
-                ax.plot(stock_data.index, stock_data['Close'], label=ticker)
-            else:
-                st.write(f"⚠️ No data available for {ticker}.")
-        except Exception as e:
-            st.write(f"❌ Error retrieving data for {ticker}: {e}")
-
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Price (USD)")
-    ax.legend()
-    ax.set_title("Stock Prices Over the Last 7 Days")
-    st.pyplot(fig)
+    st.switch_page("homepage.py")
 
 elif page == "📊 Stock Predictor":
-    st.switch_page("predictor.py")
+    st.title("📊 Stock Trend Predictor")
+    st.write("Select a company to predict whether its stock price will go **Up 📈 or Down 📉** the next trading day.")
+
+    # Reverse mapping to select by company name
+    ticker_to_company = {v: k for k, v in company_mapping.items() if k in top_10_companies}
+
+    # User selects a company name
+    company_name = st.selectbox("Choose a company:", list(ticker_to_company.keys()))
+
+    if company_name:
+        ticker = ticker_to_company[company_name]
+        model_filename = f"models/{ticker}_trend_model.pkl"
+
+        if os.path.exists(model_filename):
+            # Load Pre-Trained Model
+            best_model = joblib.load(model_filename)
+            
+            # Get latest data for prediction
+            df_company = df[df['ticker'] == ticker].copy()
+            df_company['date'] = pd.to_datetime(df_company['date'])
+            df_company = df_company.sort_values(by='date')
+
+            # Feature Engineering (Same as Training)
+            df_company['daily_return'] = df_company['close'].pct_change()
+            df_company['volatility'] = df_company['close'].rolling(7).std()
+            df_company['ma7'] = df_company['close'].rolling(7).mean()
+            df_company['ma30'] = df_company['close'].rolling(30).mean()
+            
+            # Create target variable trend
+            df_company['trend'] = (df_company['close'].shift(-1) > df_company['close']).astype(int)
+            
+            # Drop NaN values
+            df_company.dropna(inplace=True)
+
+            # Prepare Features
+            features = ['close', 'daily_return', 'volatility', 'ma7', 'ma30']
+            
+            # Evaluate model accuracy
+            y_test = df_company['trend'][-len(df_company)//5:]
+            y_pred = best_model.predict(df_company[features][-len(df_company)//5:])
+            accuracy = accuracy_score(y_test, y_pred)
+            st.write(f"✅ Model Accuracy for {company_name} ({ticker}): {accuracy:.2f}")
+            
+            latest_data = df_company[features].iloc[[-1]]  # Get latest available day
+
+            # Predict Next Day's Trend
+            prediction = best_model.predict(latest_data)
+
+            # Show Prediction
+            trend_prediction = "Up 📈" if prediction[0] == 1 else "Down 📉"
+            st.write(f"📊 Prediction for {company_name} on the next trading day: {trend_prediction}")
+
+        else:
+            st.write(f"❌ No pre-trained model found for {company_name} ({ticker}). Please train the model first.")
