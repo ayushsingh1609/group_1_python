@@ -3,3 +3,12 @@ venv/
 *.csv
 .DS_Store
 .env
+# Ignore all CSV, Excel, and model files
+*.csv
+*.xlsx
+*.pkl
+# Ignore specific directories
+models/
+simfin_data/
+
+.env
