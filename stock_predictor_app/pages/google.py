@@ -159,8 +159,8 @@ candlestick_fig.update_layout(
 st.plotly_chart(candlestick_fig, use_container_width=True)
 
 # Load models
-trend_model = joblib.load(os.path.join("saved_models", "AAPL_trend_model.pkl"))
-price_model = joblib.load(os.path.join("saved_models", "AAPL_price_model.pkl"))
+trend_model = joblib.load(os.path.join("..","saved_models", "AAPL_trend_model.pkl"))
+price_model = joblib.load(os.path.join("..","saved_models", "AAPL_price_model.pkl"))
 
 features = ['open', 'high', 'low', 'close', 'adj. close', 'volume',
             'daily_return', 'volatility', '5_day_ma', '10_day_ma']
