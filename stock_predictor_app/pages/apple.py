@@ -9,6 +9,7 @@ import seaborn as sns
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 from util import PySimFin, ETL, TradingStrategy
 import plotly.graph_objects as go
+import numpy as np
 
 load_dotenv()
 
@@ -187,7 +188,8 @@ filtered_df['trend_pred'] = trend_preds
 filtered_df['price_pred'] = price_preds
 
 trend_acc = accuracy_score(y_trend, trend_preds)
-price_rmse = mean_squared_error(y_price, price_preds, squared=False)
+price_rmse = np.sqrt(mean_squared_error(y_price, price_preds))
+
 
 trend_pred = "Up" if trend_preds[-1] == 1 else "Down"
 price_pred = price_preds[-1]
