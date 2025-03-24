@@ -64,9 +64,7 @@ class PySimFin():
             "Trading Volume": "Volume"
         })
 
-# (ETL and TradingStrategy classes remain unchanged)
 
-# ... Rest of code stays unchanged ...
         
 class ETL:
     def __init__(self, share_prices_df, tickers):

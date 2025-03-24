@@ -16,7 +16,13 @@ API_KEY = os.getenv("API_KEY")
 
 simfin = PySimFin(API_KEY)
 
-st.set_page_config(page_title="Walmart Stock Predictor")
+st.set_page_config(
+    page_title="Walmart Stock Predictor",
+    page_icon="📈",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items=None
+)
 
 # Custom dark theme with gray sidebar
 st.markdown("""
@@ -88,7 +94,7 @@ st.markdown(hide_nav_style, unsafe_allow_html=True)
 st.sidebar.title("🚀 Go Live")
 st.sidebar.markdown("📍 [🏠 Home](homepage)")
 st.sidebar.markdown("Select a company to explore predictions:")
-st.sidebar.markdown("- 🧠 [Apple (AAPL)](apple)\n- 💻 [Microsoft (MSFT)](microsoft)\n- 🔍 [Google (GOOG)](google)\n- 🛒 [Walmart (WMT)](walmart)\n- 🎬 [Netflix (NFLX)](netflix)")
+st.sidebar.markdown("- 🍎 [Apple (AAPL)](apple)\n- 💻 [Microsoft (MSFT)](microsoft)\n- 🔍 [Google (GOOG)](google)\n- 🛒 [Walmart (WMT)](walmart)\n- 🎬 [Netflix (NFLX)](netflix)")
 
 
 
@@ -139,7 +145,7 @@ etl = ETL(share_prices_df=df_share_prices, tickers=[ticker])
 df_cleaned = etl.run_pipeline()
 filtered_df = df_cleaned[(df_cleaned['date'] >= start_date) & (df_cleaned['date'] <= end_date)]
 
-st.subheader("🔧 Candlestick Chart")
+st.subheader("🔧 Price Movement")
 candlestick_fig = go.Figure(data=[
     go.Candlestick(
         x=filtered_df['date'],
@@ -152,7 +158,7 @@ candlestick_fig = go.Figure(data=[
 ])
 
 candlestick_fig.update_layout(
-    title=f"AAPL Candlestick Chart ({start_date} to {end_date})",
+    title=f"WMT Candlestick Chart ({start_date} to {end_date})",
     xaxis_title="Date",
     yaxis_title="Price (USD)",
     xaxis_rangeslider_visible=False
@@ -161,8 +167,8 @@ candlestick_fig.update_layout(
 st.plotly_chart(candlestick_fig, use_container_width=True)
 
 # Load models
-trend_model = joblib.load(os.path.join("saved_models", "AAPL_trend_model.pkl"))
-price_model = joblib.load(os.path.join("saved_models", "AAPL_price_model.pkl"))
+trend_model = joblib.load(os.path.join("saved_models", "WMT_trend_model.pkl"))
+price_model = joblib.load(os.path.join("saved_models", "WMT_price_model.pkl"))
 
 features = ['open', 'high', 'low', 'close', 'adj. close', 'volume',
             'daily_return', 'volatility', '5_day_ma', '10_day_ma']

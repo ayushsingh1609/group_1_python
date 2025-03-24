@@ -88,7 +88,7 @@ st.markdown("""
 st.sidebar.title("🚀 Go Live")
 st.sidebar.markdown("📍 [🏠 Home](homepage)")
 st.sidebar.markdown("Select a company to explore predictions:")
-st.sidebar.markdown("- 🧠 [Apple (AAPL)](apple)\n- 💻 [Microsoft (MSFT)](microsoft)\n- 🔍 [Google (GOOG)](google)\n- 🛒 [Walmart (WMT)](walmart)\n- 🎬 [Netflix (NFLX)](netflix)")
+st.sidebar.markdown("- 🍎 [Apple (AAPL)](apple)\n- 💻 [Microsoft (MSFT)](microsoft)\n- 🔍 [Google (GOOG)](google)\n- 🛒 [Walmart (WMT)](walmart)\n- 🎬 [Netflix (NFLX)](netflix)")
 
 
 
@@ -143,7 +143,7 @@ etl = ETL(share_prices_df=df_share_prices, tickers=[ticker])
 df_cleaned = etl.run_pipeline()
 filtered_df = df_cleaned[(df_cleaned['date'] >= start_date) & (df_cleaned['date'] <= end_date)]
 
-st.subheader("🔧 Candlestick Chart")
+st.subheader("🔧 Price Movement")
 candlestick_fig = go.Figure(data=[
     go.Candlestick(
         x=filtered_df['date'],
@@ -165,8 +165,12 @@ candlestick_fig.update_layout(
 st.plotly_chart(candlestick_fig, use_container_width=True)
 
 # Load models
-trend_model = joblib.load(os.path.join( "saved_models", "AAPL_trend_model.pkl"))
-price_model = joblib.load(os.path.join( "saved_models", "AAPL_price_model.pkl"))
+# Get absolute path to saved_models
+model_dir = os.path.join(os.path.dirname(__file__), "saved_models")
+
+# Load models using the full path
+trend_model = joblib.load(os.path.join(model_dir, "AAPL_trend_model.pkl"))
+price_model = joblib.load(os.path.join(model_dir, "AAPL_price_model.pkl"))
 
 
 features = ['open', 'high', 'low', 'close', 'adj. close', 'volume',

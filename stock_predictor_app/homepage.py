@@ -85,7 +85,7 @@ st.markdown("""
 # --- Sidebar Navigation ---
 st.sidebar.title("🚀 Go Live")
 st.sidebar.markdown("Select a company to explore predictions:")
-st.sidebar.markdown("- 🧠 [Apple (AAPL)](apple)\n- 💻 [Microsoft (MSFT)](microsoft)\n- 🔍 [Google (GOOG)](google)\n- 🛒 [Walmart (WMT)](walmart)\n- 🎬 [Netflix (NFLX)](netflix)")
+st.sidebar.markdown("- 🍎 [Apple (AAPL)](apple)\n- 💻 [Microsoft (MSFT)](microsoft)\n- 🔍 [Google (GOOG)](google)\n- 🛒 [Walmart (WMT)](walmart)\n- 🎬 [Netflix (NFLX)](netflix)")
 
 # Main Page Content
 st.title("Welcome to the TradeVision AI 📊")
@@ -153,8 +153,6 @@ def fetch_news():
         st.error(f"Error fetching news: {e}")
 
 fetch_news()
-
-
 
 
 
