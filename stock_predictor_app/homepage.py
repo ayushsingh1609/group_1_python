@@ -20,6 +20,21 @@ st.set_page_config(
     menu_items=None
 )
 
+st.markdown("""
+    <style>
+    html, body, [class*="stApp"] {
+        color: #ffffff !important;
+        background-color: #000000;
+        font-family: 'Roboto', sans-serif;
+    }
+    [data-testid="stSidebar"] {
+        background-color: #111111;
+    }
+    [data-testid="stSidebar"] * {
+        color: #ffffff !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Hide Streamlit's default page navigation menu
 hide_nav_style = """
@@ -36,11 +51,6 @@ st.markdown(hide_nav_style, unsafe_allow_html=True)
 # Custom dark theme with gray sidebar
 st.markdown("""
     <style>
-    html, body, [class*="stApp"] {
-    color: #ffffff !important;
-    }
-        
-
     /* Global app background */
     html, body, [class*="stApp"] {
         background-color: #000000;
