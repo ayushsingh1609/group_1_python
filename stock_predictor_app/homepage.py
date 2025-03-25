@@ -13,7 +13,7 @@ api_key_news = os.getenv("API_KEY_NEWS")
 
 
 st.set_page_config(
-    page_title="TradeVision AI",
+    page_title="StockForecast",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -94,7 +94,7 @@ st.sidebar.markdown("Select a company to explore predictions:")
 st.sidebar.markdown("- 🍎 [Apple (AAPL)](apple)\n- 💻 [Microsoft (MSFT)](microsoft)\n- 🔍 [Google (GOOG)](google)\n- 🛒 [Walmart (WMT)](walmart)\n- 🎬 [Netflix (NFLX)](netflix)")
 
 # Main Page Content
-st.title("Welcome to the TradeVision AI 📊")
+st.title("Welcome to StockForecast")
 
 st.markdown("""
 ### Overview
