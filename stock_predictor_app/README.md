@@ -1,9 +1,9 @@
 Readme
 
-# TradeVision AI
+# StockForecast
 
 ## Overview
-TradeVision AI is a machine learning-powered web application that predicts stock price movements and simulates trading strategies. The system is designed to provide retail investors and finance enthusiasts with informed insights derived from real-time financial data and AI predictions.
+StockForecast is a machine learning-powered web application that we developed for our Python 2 Group Assignmenet that predicts stock price movements and simulates trading strategies. The system is designed to provide retail investors and finance enthusiasts with informed insights derived from real-time financial data and AI predictions.
 
 ## Features
 - Company-specific dashboards with detailed analysis
