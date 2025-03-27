@@ -22,19 +22,49 @@ st.set_page_config(
 
 st.markdown("""
     <style>
+    /* Global background and font */
     html, body, [class*="stApp"] {
-        color: #ffffff !important;
         background-color: #000000;
+        color: #ffffff !important;
         font-family: 'Roboto', sans-serif;
     }
+
+    /* Sidebar */
     [data-testid="stSidebar"] {
         background-color: #111111;
     }
     [data-testid="stSidebar"] * {
         color: #ffffff !important;
     }
+
+    /* Force heading color */
+    h1, h2, h3, h4, h5, h6 {
+        color: #90caf9 !important;
+    }
+
+    /* Form inputs */
+    input, textarea, select {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+        border: none;
+        border-radius: 5px;
+    }
+
+    /* Buttons */
+    .stButton>button {
+        background-color: #222222 !important;
+        color: #ffffff !important;
+        border: 1px solid #444444;
+        border-radius: 5px;
+    }
+
+    /* Remove scrollbars */
+    ::-webkit-scrollbar {
+        width: 0px;
+    }
     </style>
 """, unsafe_allow_html=True)
+
 
 # Hide Streamlit's default page navigation menu
 hide_nav_style = """
